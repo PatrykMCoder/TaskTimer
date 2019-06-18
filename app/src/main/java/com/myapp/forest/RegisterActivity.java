@@ -30,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        firebaseAuth = FirebaseAuth.getInstance();
 
         emailEditText = findViewById(R.id.emailRegisterET);
         passwordEditText = findViewById(R.id.passwordRegisterET);
@@ -40,18 +41,24 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
-
-                firebaseAuth = FirebaseAuth.getInstance();
-                firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
-                        }else{
-                            Toast.makeText(RegisterActivity.this, "Error with create account. Please later again", Toast.LENGTH_SHORT).show();
+                if(!email.equals("") && !password.equals("")) {
+                    firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "Error with create account. Please later again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }else if(email.equals("")){
+                    emailEditText.setError("Enter e-mail!");
+                    emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                }else if(password.equals("")){
+                    passwordEditText.setError("Enter password!");
+                    passwordEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                }
             }
         });
     }

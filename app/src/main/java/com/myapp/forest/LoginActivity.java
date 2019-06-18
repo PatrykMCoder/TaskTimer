@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private Button registerButton;
     private Button loginButton;
+    private TextView resetPasswordTextView;
 
     private String email;
     private String password;
@@ -41,10 +44,34 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        resetPasswordTextView = findViewById(R.id.resetPasswordTV);
         emailEditText = findViewById(R.id.emailET);
         passwordEditText = findViewById(R.id.passwordET);
         registerButton = findViewById(R.id.registerBtn);
         loginButton = findViewById(R.id.loginBtn);
+
+        resetPasswordTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                email = emailEditText.getText().toString();
+                if(!email.equals("")) {
+                    firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "E-mail send!", Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(LoginActivity.this, "Error with send e-mail. Try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }else{
+                    emailEditText.setError("Enter e-mail!");
+                    emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                }
+            }
+        });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,17 +86,24 @@ public class LoginActivity extends AppCompatActivity {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
 
-                firebaseAuth = FirebaseAuth.getInstance();
-                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            startActivity(new Intent(LoginActivity.this, HomeActivity.class)); 
-                        }else{
-                            Toast.makeText(LoginActivity.this, "Error with login. Please again", Toast.LENGTH_SHORT).show();
+                if (!email.equals("") && !password.equals("")) {
+                    firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Error with login. Please again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }else if(email.equals("")){
+                    emailEditText.setError("Enter e-mail!");
+                    emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                }else if(password.equals("")){
+                    passwordEditText.setError("Enter password!");
+                    passwordEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                }
             }
         });
 

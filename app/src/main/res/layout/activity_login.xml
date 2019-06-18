@@ -36,7 +36,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="231dp"
         android:ems="10"
-        android:hint="Enter email"
+        android:hint="Enter e-mail"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -62,7 +62,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="12dp"
         android:layout_marginLeft="12dp"
-        android:layout_marginBottom="286dp"
+        android:layout_marginBottom="253dp"
         android:text="Create Account" />
 
     <Button
@@ -74,7 +74,26 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="12dp"
         android:layout_marginRight="12dp"
-        android:layout_marginBottom="285dp"
+        android:layout_marginBottom="252dp"
         android:text="Login" />
+
+    <TextView
+        android:id="@+id/resetPasswordTV"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/passwordET"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="305dp"
+        android:background="#00525252"
+        android:clickable="true"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:gravity="center"
+        android:text="Forgot password? Press this text. Will send e-mail with attachment to reset password" />
 
 </RelativeLayout>
