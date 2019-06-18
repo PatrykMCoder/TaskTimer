@@ -68,14 +68,6 @@ public class HomeActivity extends AppCompatActivity {
 
         lookLoginUser();
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-
-        assert firebaseUser != null;
-        tmp = firebaseUser.getEmail();
-        assert tmp != null;
-        referenceName = tmp.replace("@gmail.com", "");
-
         finishTask = getIntent().getBooleanExtra("finish", false);
         pasueApk = getIntent().getBooleanExtra("app_pause", false);
         title = getIntent().getStringExtra("title_f");
@@ -87,6 +79,15 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(HomeActivity.this, CreateTaskActivity.class));
+            }
+        });
+
+        addNewTaskFBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                firebaseAuth.signOut();
+                lookLoginUser();
+                return false;
             }
         });
 
@@ -103,6 +104,11 @@ public class HomeActivity extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser == null)
             startActivity(new Intent(this, LoginActivity.class));
+        else{
+            tmp = firebaseUser.getEmail();
+            assert tmp != null;
+            referenceName = tmp.replace("@gmail.com", "");
+        }
     }
 
     private void saveToDatabase() {
