@@ -1,4 +1,4 @@
-package com.myapp.forest;
+package com.myapp.forest.timer;
 
 public class Timer {
 

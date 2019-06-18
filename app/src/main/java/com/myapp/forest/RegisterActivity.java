@@ -41,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
+
                 if(!email.equals("") && !password.equals("")) {
                     firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override

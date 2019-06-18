@@ -1,4 +1,4 @@
-package com.myapp.forest;
+package com.myapp.forest.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.myapp.forest.R;
 
 
 public class ListAdapter extends BaseAdapter {
