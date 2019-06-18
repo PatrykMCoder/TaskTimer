@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "1084358851322",
+    "firebase_url": "https://forest-ab9b7.firebaseio.com",
+    "project_id": "forest-ab9b7",
+    "storage_bucket": "forest-ab9b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084358851322:android:606234253ae89ba0",
+        "android_client_info": {
+          "package_name": "com.myapp.forest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1084358851322-engt30uurlchgvtv8grfg9jlod8nkpve.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myapp.forest",
+            "certificate_hash": "1704bdf9e1602a830a0ca852885ed72b230642c9"
+          }
+        },
+        {
+          "client_id": "1084358851322-pg5ik0ffq700jo0fqn3uitlf540vgntt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myapp.forest",
+            "certificate_hash": "ffe3e2374dadd4b2d90a12c34a3f07703923ee94"
+          }
+        },
+        {
+          "client_id": "1084358851322-f7gatbgrqeek62cnlsoikvgtv8vr7oj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC54d5VD9ijKLBibs-TEiVkyW6YJJhk0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1084358851322-f7gatbgrqeek62cnlsoikvgtv8vr7oj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
