@@ -3,6 +3,7 @@ package com.myapp.forest;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //firebase
     private FirebaseAuth firebaseAuth;
 
     private EditText emailEditText;
@@ -38,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private String email;
     private String password;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,11 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordET);
         registerButton = findViewById(R.id.registerBtn);
         loginButton = findViewById(R.id.loginBtn);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Login");
+        progressDialog.setMessage("Please wait...");
 
         resetPasswordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,14 +93,17 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
+                progressDialog.show();
 
                 if (!email.equals("") && !password.equals("")) {
                     firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                progressDialog.cancel();
                                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             } else {
+                                progressDialog.cancel();
                                 Toast.makeText(LoginActivity.this, "Error with login. Please again", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -106,6 +117,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

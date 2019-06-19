@@ -3,6 +3,7 @@ package com.myapp.forest;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +27,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +39,15 @@ public class RegisterActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordRegisterET);
         createUserButton = findViewById(R.id.createAccountBtn);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Create account");
+        progressDialog.setMessage("Please wait...");
+
         createUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
 
@@ -47,8 +56,10 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                progressDialog.cancel();
                                 startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
                             } else {
+                                progressDialog.cancel();
                                 Toast.makeText(RegisterActivity.this, "Error with create account. Please later again", Toast.LENGTH_SHORT).show();
                             }
                         }

@@ -36,7 +36,7 @@
         android:textSize="14dp" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/arrorwIV"
         android:layout_width="122dp"
         android:layout_height="358dp"
         android:layout_alignParentEnd="true"
@@ -61,6 +61,17 @@
         android:gravity="center"
         android:text="Press this button and start your task! \n (In future in this window will be list with your finished task)"
         android:textSize="24dp" />
+
+    <ListView
+        android:id="@+id/lastTaskLV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="0dp" />
 
 
 </RelativeLayout>

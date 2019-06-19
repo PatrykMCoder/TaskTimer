@@ -13,17 +13,16 @@ import com.myapp.forest.R;
 
 public class ListAdapter extends BaseAdapter {
 
-
     private Context context;
-    private String[] title;
+    private String title[];
     private static LayoutInflater layoutInflater;
 
     private TextView titleTextView;
     private TextView finishTextView;
 
-    public ListAdapter(Context context, String[] data) {
+    public ListAdapter(Context context, String[] title) {
         this.context = context;
-        this.title = data;
+        this.title = title;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -53,8 +52,6 @@ public class ListAdapter extends BaseAdapter {
         finishTextView = view.findViewById(R.id.listItemFinish);
 
         titleTextView.setText(title[position]);
-        //finishTextView.setText(data[1]);
-
         return view;
     }
 }
