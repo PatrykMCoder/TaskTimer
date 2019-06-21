@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".TimerActivity"></activity>
+        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".TimerActivity" />
         <activity
             android:name=".CreateTaskActivity"
             android:label=""

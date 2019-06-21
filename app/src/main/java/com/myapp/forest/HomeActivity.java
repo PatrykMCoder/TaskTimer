@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -54,13 +55,14 @@ public class HomeActivity extends AppCompatActivity {
     private TextView infoWhereTextView;
     private ImageView arrowImageView;
     private ListView listView;
+    private ImageButton profileImageButton;
 
     private String title;
     private boolean finishTask = false;
     private boolean pasueApk = false;
 
     private String tmp;
-    private String referenceName;
+    private String[] referenceName;
 
     private String scoreString;
     private int fullScore;
@@ -84,6 +86,7 @@ public class HomeActivity extends AppCompatActivity {
 
         infoWhereTextView = findViewById(R.id.infoWhereTV);
         arrowImageView = findViewById(R.id.arrorwIV);
+        profileImageButton = findViewById(R.id.profileIB);
 
         listView = findViewById(R.id.lastTaskLV);
         addNewTaskFBtn = findViewById(R.id.addNewTaskFloatingActionButton);
@@ -103,6 +106,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        profileImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
+                startActivity(profileIntent);
+            }
+        });
+
         readFromDatabase();
 
         if (finishTask) {
@@ -118,15 +129,15 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }else{
+        } else {
             tmp = firebaseUser.getEmail();
             assert tmp != null;
-            referenceName = tmp.replace("@gmail.com", "");
+            referenceName = tmp.split("@");
         }
     }
 
     private void saveToDatabase() {
-        databaseReference = firebaseDatabase.getReference("/task_" + referenceName + "/_score/score");
+        databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score/score");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -137,12 +148,12 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     fullScore = Integer.parseInt(scoreString);
                 }
-                databaseReference = firebaseDatabase.getReference("/task_" + referenceName + "/data" + "/" + title);
+                databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/data" + "/" + title);
                 databaseReference.child("finish").setValue(finishTask);
 
                 int newScore = getIntent().getIntExtra("add_score", 0);
                 fullScore += newScore;
-                databaseReference = firebaseDatabase.getReference("/task_" + referenceName + "/_score");
+                databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score");
                 Map<String, Object> newScoreMap = new HashMap<>();
                 newScoreMap.put("score", fullScore);
                 databaseReference.updateChildren(newScoreMap);
@@ -158,7 +169,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void readFromDatabase() {
         try {
-            databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName + "/_score/score");
+            databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName[0] + "/_score/score");
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -169,7 +180,7 @@ public class HomeActivity extends AppCompatActivity {
                     } else {
                         fullScore = Integer.parseInt(scoreString);
                     }
-                    databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName + "/data/");
+                    databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName[0] + "/data/");
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -186,8 +197,6 @@ public class HomeActivity extends AppCompatActivity {
                                 arrowImageView.setVisibility(View.VISIBLE);
                                 infoWhereTextView.setVisibility(View.VISIBLE);
                             }
-
-                            listView.setAdapter(new ListAdapter(HomeActivity.this, dataArray));
                         }
 
                         @Override
@@ -238,5 +247,6 @@ public class HomeActivity extends AppCompatActivity {
             scoreTextView.setText(String.format("%s", "none"));
 
         scoreTextView.setText(String.format("%s", fullScore));
+        listView.setAdapter(new ListAdapter(HomeActivity.this, dataArray));
     }
 }
