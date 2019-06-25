@@ -106,15 +106,16 @@ public class HomeActivity extends AppCompatActivity {
         addNewTaskFBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                firebaseAuth.signOut();
+                database.signOut();
                 lookLoginUser();
-                return false;
+                return true;
             }
         });
 
         profileImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                database.loadProfile(true);
                 Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(profileIntent);
             }

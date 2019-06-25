@@ -1,5 +1,7 @@
 package com.myapp.forest.firebase.database;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
@@ -15,6 +17,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.myapp.forest.HomeActivity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class Database{
     private Context context;
     private FirebaseAuth firebaseAuth;
@@ -26,6 +31,8 @@ public class Database{
 
     private String[] referenceName;
     private String tmp;
+
+    private String username;
 
     public Database(Context context){
         this.context = context;
@@ -46,16 +53,13 @@ public class Database{
             Toast.makeText(context, "Please login again", Toast.LENGTH_SHORT).show();
     }
 
-    private Database(Context context, FirebaseAuth firebaseAuth, FirebaseUser firebaseUser, FirebaseDatabase firebaseDatabase, DatabaseReference databaseReference){
 
-    }
-
-    public void createAccount(String email, String password) {
+    public void createAccount(String email, String password, final ProgressDialog progressDialog) {
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    // progressDialog.cancel();
+                    progressDialog.cancel();
                     firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                     firebaseUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -68,7 +72,7 @@ public class Database{
                         }
                     });
                 } else {
-                    //progressDialog.cancel();
+                    progressDialog.cancel();
                     Toast.makeText(context, "Error with create account. Please later again", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -83,15 +87,15 @@ public class Database{
 
     }
 
-    public void signIn(String email, String password) {
+    public void signIn(String email, String password, final ProgressDialog progressDialog) {
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    // progressDialog.cancel();
+                    progressDialog.cancel();
                     context.startActivity(new Intent(context, HomeActivity.class));
                 } else {
-                    //progressDialog.cancel();
+                    progressDialog.cancel();
                     Toast.makeText(context, "Error with login. Please again", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -105,4 +109,12 @@ public class Database{
     public void saveToDatabase(){
 
     }
+
+    public void signOut(){
+        firebaseAuth.signOut();
+    }
+
+    public void loadProfile(boolean localProfile){
+
+  }
 }

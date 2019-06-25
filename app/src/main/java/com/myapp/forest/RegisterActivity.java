@@ -59,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
 
                 if(!email.equals("") && !password.equals("")) {
-                    database.createAccount(email, password);
+                    database.createAccount(email, password, progressDialog);
                     progressDialog.cancel();
                 }else if(email.equals("")){
                     emailEditText.setError("Enter e-mail!");

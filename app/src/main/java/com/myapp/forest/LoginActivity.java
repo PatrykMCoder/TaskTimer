@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
                 progressDialog.show();
                 if (!email.equals("") && !password.equals("")) {
-                    database.signIn(email, password);
+                    database.signIn(email, password, progressDialog);
                 } else if (email.equals("")) {
                     emailEditText.setError("Enter e-mail!");
                     emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
