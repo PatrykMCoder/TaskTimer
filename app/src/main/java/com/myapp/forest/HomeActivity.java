@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.myapp.forest.adapters.ListAdapter;
+import com.myapp.forest.firebase.database.Database;
 
 import org.w3c.dom.Comment;
 
@@ -49,6 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
 
     private boolean databaseError;
+    private boolean userVer;
 
     private FloatingActionButton addNewTaskFBtn;
     private TextView scoreTextView;
@@ -71,18 +73,22 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
 
+    private Database database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
+        database = new Database(this);
 
         lookLoginUser();
 
         finishTask = getIntent().getBooleanExtra("finish", false);
         pasueApk = getIntent().getBooleanExtra("app_pause", false);
         title = getIntent().getStringExtra("title_f");
-
-        firebaseDatabase = FirebaseDatabase.getInstance();
 
         infoWhereTextView = findViewById(R.id.infoWhereTV);
         arrowImageView = findViewById(R.id.arrorwIV);
@@ -114,8 +120,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        readFromDatabase();
-
         if (finishTask) {
             saveToDatabase();
             showInfoAboutFinishedTask();
@@ -123,20 +127,31 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void lookLoginUser() {
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
+            getEmailVer();
             tmp = firebaseUser.getEmail();
             assert tmp != null;
             referenceName = tmp.split("@");
+            readFromDatabase();
+        }
+    }
+
+    private void getEmailVer(){
+        if(!database.getEmialVer()){
+            Toast.makeText(this, "Please verified your email!", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
         }
     }
 
     private void saveToDatabase() {
+        firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score/score");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -169,6 +184,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void readFromDatabase() {
         try {
+            firebaseDatabase = FirebaseDatabase.getInstance();
             databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName[0] + "/_score/score");
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -197,6 +213,8 @@ public class HomeActivity extends AppCompatActivity {
                                 arrowImageView.setVisibility(View.VISIBLE);
                                 infoWhereTextView.setVisibility(View.VISIBLE);
                             }
+
+                            listView.setAdapter(new ListAdapter(HomeActivity.this, dataArray));
                         }
 
                         @Override
@@ -247,6 +265,5 @@ public class HomeActivity extends AppCompatActivity {
             scoreTextView.setText(String.format("%s", "none"));
 
         scoreTextView.setText(String.format("%s", fullScore));
-        listView.setAdapter(new ListAdapter(HomeActivity.this, dataArray));
     }
 }

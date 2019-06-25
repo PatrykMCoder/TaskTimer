@@ -15,6 +15,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.myapp.forest.firebase.database.Database;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -26,14 +28,19 @@ public class RegisterActivity extends AppCompatActivity {
     private String password;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     private ProgressDialog progressDialog;
+
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         firebaseAuth = FirebaseAuth.getInstance();
+
+        database = new Database(this);
 
         emailEditText = findViewById(R.id.emailRegisterET);
         passwordEditText = findViewById(R.id.passwordRegisterET);
@@ -52,18 +59,8 @@ public class RegisterActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
 
                 if(!email.equals("") && !password.equals("")) {
-                    firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                progressDialog.cancel();
-                                startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
-                            } else {
-                                progressDialog.cancel();
-                                Toast.makeText(RegisterActivity.this, "Error with create account. Please later again", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    database.createAccount(email, password);
+                    progressDialog.cancel();
                 }else if(email.equals("")){
                     emailEditText.setError("Enter e-mail!");
                     emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);

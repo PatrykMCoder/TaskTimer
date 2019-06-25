@@ -16,6 +16,7 @@ public class ListAdapter extends BaseAdapter {
     private Context context;
     private String title[];
     private static LayoutInflater layoutInflater;
+    private int length;
 
     private TextView titleTextView;
     private TextView finishTextView;
@@ -28,7 +29,7 @@ public class ListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return title.length;
+       return title.length;
     }
 
     @Override

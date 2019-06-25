@@ -26,6 +26,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.myapp.forest.firebase.database.Database;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -41,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
 
     private ProgressDialog progressDialog;
+
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +63,13 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setTitle("Login");
         progressDialog.setMessage("Please wait...");
 
+        database = new Database(this);
+
         resetPasswordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 email = emailEditText.getText().toString();
-                if(!email.equals("")) {
+                if (!email.equals("")) {
                     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -74,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "Error with send e-mail. Try again!", Toast.LENGTH_SHORT).show();
                         }
                     });
-                }else{
+                } else {
                     emailEditText.setError("Enter e-mail!");
                     emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
                 }
@@ -94,26 +99,16 @@ public class LoginActivity extends AppCompatActivity {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
                 progressDialog.show();
-
                 if (!email.equals("") && !password.equals("")) {
-                    firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                progressDialog.cancel();
-                                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                            } else {
-                                progressDialog.cancel();
-                                Toast.makeText(LoginActivity.this, "Error with login. Please again", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }else if(email.equals("")){
+                    database.signIn(email, password);
+                } else if (email.equals("")) {
                     emailEditText.setError("Enter e-mail!");
                     emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
-                }else if(password.equals("")){
+                    progressDialog.cancel();
+                } else if (password.equals("")) {
                     passwordEditText.setError("Enter password!");
                     passwordEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                    progressDialog.cancel();
                 }
             }
         });
