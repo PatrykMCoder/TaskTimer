@@ -5,28 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.myapp.forest.firebase.database.Database;
+import com.myapp.forest.firebase.database.DatabaseController;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -43,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private Database database;
+    private DatabaseController databaseController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setTitle("Login");
         progressDialog.setMessage("Please wait...");
 
-        database = new Database(this);
+        databaseController = new DatabaseController(this);
 
         resetPasswordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                 password = passwordEditText.getText().toString();
                 progressDialog.show();
                 if (!email.equals("") && !password.equals("")) {
-                    database.signIn(email, password, progressDialog);
+                    databaseController.signIn(email, password, progressDialog);
                 } else if (email.equals("")) {
                     emailEditText.setError("Enter e-mail!");
                     emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);

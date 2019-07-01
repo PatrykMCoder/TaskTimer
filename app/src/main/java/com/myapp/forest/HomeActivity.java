@@ -1,19 +1,16 @@
 package com.myapp.forest;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Dialog;
+import android.app.Application;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,24 +20,11 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.components.Component;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
+import com.myapp.forest.adapters.DataForAdapter;
 import com.myapp.forest.adapters.ListAdapter;
-import com.myapp.forest.firebase.database.Database;
-
-import org.w3c.dom.Comment;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import com.myapp.forest.firebase.database.DatabaseController;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -73,7 +57,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
 
-    private Database database;
+    private DatabaseController databaseController;
+    private Intent intentWithData;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-        database = new Database(this);
+        databaseController = new DatabaseController(this);
 
         lookLoginUser();
 
@@ -94,7 +80,6 @@ public class HomeActivity extends AppCompatActivity {
         arrowImageView = findViewById(R.id.arrorwIV);
         profileImageButton = findViewById(R.id.profileIB);
 
-        listView = findViewById(R.id.lastTaskLV);
         addNewTaskFBtn = findViewById(R.id.addNewTaskFloatingActionButton);
         addNewTaskFBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +91,7 @@ public class HomeActivity extends AppCompatActivity {
         addNewTaskFBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                database.signOut();
+                databaseController.signOut();
                 lookLoginUser();
                 return true;
             }
@@ -115,15 +100,17 @@ public class HomeActivity extends AppCompatActivity {
         profileImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.loadProfile(true);
+                databaseController.loadProfile(true);
                 Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(profileIntent);
             }
         });
 
         if (finishTask) {
-            saveToDatabase();
+            databaseController.saveToDatabase(this, title);
+            databaseController.readFromDatabase();
             showInfoAboutFinishedTask();
+            updateUI();
         }
     }
 
@@ -137,12 +124,13 @@ public class HomeActivity extends AppCompatActivity {
             tmp = firebaseUser.getEmail();
             assert tmp != null;
             referenceName = tmp.split("@");
-            readFromDatabase();
+            databaseController.readFromDatabase();
+            updateUI();
         }
     }
 
     private void getEmailVer(){
-        if(!database.getEmialVer()){
+        if(!databaseController.getEmailVer()){
             Toast.makeText(this, "Please verified your email!", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -151,91 +139,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void saveToDatabase() {
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score/score");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                scoreString = String.valueOf(dataSnapshot.getValue());
-                if (scoreString.equals("") || scoreString.equals("null")) {
-                    scoreString = "0";
-                    fullScore = Integer.parseInt(scoreString);
-                } else {
-                    fullScore = Integer.parseInt(scoreString);
-                }
-                databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/data" + "/" + title);
-                databaseReference.child("finish").setValue(finishTask);
-
-                int newScore = getIntent().getIntExtra("add_score", 0);
-                fullScore += newScore;
-                databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score");
-                Map<String, Object> newScoreMap = new HashMap<>();
-                newScoreMap.put("score", fullScore);
-                databaseReference.updateChildren(newScoreMap);
-                readFromDatabase();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: error: " + databaseError);
-            }
-        });
-    }
-
-    private void readFromDatabase() {
-        try {
-            firebaseDatabase = FirebaseDatabase.getInstance();
-            databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName[0] + "/_score/score");
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    scoreString = String.valueOf(dataSnapshot.getValue());
-                    if (scoreString.equals("") || scoreString.equals("null")) {
-                        scoreString = "0";
-                        fullScore = Integer.parseInt(scoreString);
-                    } else {
-                        fullScore = Integer.parseInt(scoreString);
-                    }
-                    databaseReference = firebaseDatabase.getReference().child("/task_" + referenceName[0] + "/data/");
-                    databaseReference.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String data = String.valueOf(dataSnapshot.getValue());
-                            String formatData = data.replace("={finish=true}", "");
-                            String formatData2 = formatData.replace("{", "");
-                            String formatData3 = formatData2.replace("}", "");
-                            dataArray = formatData3.split(",");
-
-                            if(dataArray.length > 0){
-                                arrowImageView.setVisibility(View.INVISIBLE);
-                                infoWhereTextView.setVisibility(View.INVISIBLE);
-                            }else{
-                                arrowImageView.setVisibility(View.VISIBLE);
-                                infoWhereTextView.setVisibility(View.VISIBLE);
-                            }
-
-                            listView.setAdapter(new ListAdapter(HomeActivity.this, dataArray));
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Log.d(TAG, "onCancelled: " + databaseError);
-                        }
-                    });
-
-                    updateUI();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d(TAG, "onCancelled: Score error: " + databaseError);
-                }
-            });
-        } catch (DatabaseException error) {
-            databaseError = true;
-        }
-    }
 
     private AlertDialog dialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -261,10 +164,17 @@ public class HomeActivity extends AppCompatActivity {
 
     private void updateUI() {
         scoreTextView = findViewById(R.id.scoreTV);
+        listView = findViewById(R.id.lastTaskLV);
 
         if (databaseError)
             scoreTextView.setText(String.format("%s", "none"));
 
-        scoreTextView.setText(String.format("%s", fullScore));
+        Context context = getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data_from_db", MODE_PRIVATE);
+        int score = sharedPreferences.getInt("full_score", 0);
+        String titleToFormat = sharedPreferences.getString("title", "");
+        String[] dataArray = titleToFormat.split(",");
+        scoreTextView.setText(String.format("%s", score));
+        listView.setAdapter(new ListAdapter(getApplicationContext(), dataArray));
     }
 }
