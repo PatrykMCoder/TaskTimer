@@ -1,5 +1,6 @@
 package com.myapp.forest.firebase.database;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.myapp.forest.HomeActivity;
 import com.myapp.forest.adapters.DataForAdapter;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +53,7 @@ public class DatabaseController {
     private String scoreString;
     private int fullScore;
 
-    private String[] dataArray;
+    private long createData;
 
     private final static String TAG = "DatabaseController";
 
@@ -188,9 +192,7 @@ public class DatabaseController {
                     fullScore = Integer.parseInt(scoreString);
                 }
                 databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/data/" + title);
-                Date date = new Date();
-                long currentTime = date.getTime();
-                databaseReference.child("time finished").setValue(currentTime);
+                databaseReference.child("finished").setValue("Finish");
                 int newScore = homeActivity.getIntent().getIntExtra("add_score", 0);
                 fullScore += newScore;
                 databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score");
@@ -207,11 +209,29 @@ public class DatabaseController {
         });
     }
 
+    public void removeAccount(){
+
+    }
+
     public void signOut() {
         firebaseAuth.signOut();
     }
 
-    public void loadProfile(boolean localProfile) {
+    public ArrayList<String> loadProfile(boolean localProfile) {
+        ArrayList<String> dataProfile = new ArrayList<>();
+        if(localProfile){
+            String email = firebaseUser.getEmail();
+            String[] emailFormat = email.split("@");
+            String username = emailFormat[0];
 
+            createData = ((firebaseUser.getMetadata())).getCreationTimestamp();
+            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:SS");
+            String dataCreateString = String.format("Account create: %s", dateFormat.format(createData));
+
+
+            dataProfile.add(0, username);
+            dataProfile.add(1, dataCreateString);
+        }
+        return dataProfile;
     }
 }

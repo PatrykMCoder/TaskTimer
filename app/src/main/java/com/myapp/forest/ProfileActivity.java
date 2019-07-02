@@ -13,9 +13,11 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.myapp.forest.firebase.database.DatabaseController;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -32,6 +34,8 @@ public class ProfileActivity extends AppCompatActivity {
     private String[] username;
     private long createData;
 
+    private DatabaseController databaseController;
+
     private AlertDialog alertDialogRemoveAccount;
 
     private final static String TAG = "ProfileActivity";
@@ -47,11 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         dataCreateAccountTextView = findViewById(R.id.dataCreateTV);
         removeAccountButton = findViewById(R.id.removeAccountBtn);
 
-        usernameTextView.setText(String.format("Profile\n%s", readUsername()));
-
-        createData = ((firebaseUser.getMetadata())).getCreationTimestamp();
-        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:SS");
-        dataCreateAccountTextView.setText(String.format("Account create: %s", dateFormat.format(createData)));
+        databaseController = new DatabaseController(this);
 
         removeAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,13 +61,13 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        updateUI();
+
     }
 
-    private String readUsername() {
-        email = firebaseUser.getEmail();
-        assert email != null;
-        username = email.split("@");
-        return username[0];
+    private void updateUI(){
+        usernameTextView.setText(loadData().get(0));
+        dataCreateAccountTextView.setText(loadData().get(1));
     }
 
     private AlertDialog alertDialogBuilder(){
@@ -77,6 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        databaseController.removeAccount();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -87,5 +88,9 @@ public class ProfileActivity extends AppCompatActivity {
                 });
 
         return builder.create();
+    }
+
+    private ArrayList<String> loadData(){
+        return databaseController.loadProfile(true);
     }
 }
