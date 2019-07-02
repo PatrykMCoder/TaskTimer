@@ -15,7 +15,10 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,12 +39,16 @@ import java.util.Map;
 
 public class DatabaseController {
     private Context context;
+
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
+    private AuthCredential authCredential;
+
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceScore;
     private DatabaseReference databaseReferenceTask;
+
 
     private boolean databaseError;
 
@@ -72,7 +79,7 @@ public class DatabaseController {
             referenceName = tmp.split("@");
 
             databaseReferenceScore = firebaseDatabase.getReference("/task_" + referenceName[0] + "/_score/score");
-            databaseReferenceTask = firebaseDatabase.getReference("/task_" + referenceName[0] + "/data" + "/" + "title"); //get title from activity
+            databaseReferenceTask = firebaseDatabase.getReference("/task_" + referenceName[0]);
         } else
             Toast.makeText(context, "Please login again", Toast.LENGTH_SHORT).show();
     }
@@ -209,8 +216,25 @@ public class DatabaseController {
         });
     }
 
-    public void removeAccount(){
+    public void removeAccount(String password){
+        String email = firebaseUser.getEmail();
+        if(firebaseUser != null && !password.isEmpty() && !email.isEmpty()){
+            authCredential = EmailAuthProvider.getCredential(email, password);
 
+            firebaseUser.reauthenticate(authCredential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()) {
+                        databaseReference = firebaseDatabase.getReference("/task_" + referenceName[0]);
+                        databaseReference.removeValue();
+                        firebaseUser.delete();
+
+                    }else{
+                        task.getException();
+                    }
+                }
+            });
+        }
     }
 
     public void signOut() {

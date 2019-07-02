@@ -5,11 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -62,7 +69,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         updateUI();
-
     }
 
     private void updateUI(){
@@ -71,13 +77,28 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private AlertDialog alertDialogBuilder(){
+        final EditText passwordEditText = new EditText(ProfileActivity.this);
+        passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordEditText.setHint("Enter your password!");
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        passwordEditText.setLayoutParams(layoutParams);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle("Remove Account")
                 .setMessage("Are your sure? Your data will remove!")
+                .setView(passwordEditText)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        databaseController.removeAccount();
+                        if(!passwordEditText.getText().toString().isEmpty()) {
+                            databaseController.removeAccount(passwordEditText.getText().toString());
+                            Toast.makeText(ProfileActivity.this, "Account removed", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }else
+                            Toast.makeText(ProfileActivity.this, "Enter password!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

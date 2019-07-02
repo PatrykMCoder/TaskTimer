@@ -58,9 +58,11 @@ public class RegisterActivity extends AppCompatActivity {
                 }else if(email.equals("")){
                     emailEditText.setError("Enter e-mail!");
                     emailEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                    progressDialog.cancel();
                 }else if(password.equals("")){
                     passwordEditText.setError("Enter password!");
                     passwordEditText.setBackgroundResource(R.drawable.edit_text_error_background);
+                    progressDialog.cancel();
                 }
             }
         });
