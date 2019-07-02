@@ -49,7 +49,6 @@ public class DatabaseController {
     private DatabaseReference databaseReferenceScore;
     private DatabaseReference databaseReferenceTask;
 
-
     private boolean databaseError;
 
     private String[] referenceName;
@@ -63,7 +62,7 @@ public class DatabaseController {
     private long createData;
 
     private final static String TAG = "DatabaseController";
-
+    private final static String REG =  "__";
 
     public DatabaseController(Context context) {
         this.context = context;
@@ -114,6 +113,10 @@ public class DatabaseController {
         return firebaseUser.isEmailVerified();
     }
 
+    public FirebaseUser lookingUserLogin(){
+        return firebaseUser;
+    }
+
     public void resetPassword() {
 
     }
@@ -157,14 +160,16 @@ public class DatabaseController {
                             String formatData3 = formatData2.replace("}", "");
                             dataArray = formatData3.split(",");
                            */
-                            String formatData = data.replace("={finish=Finish}", "");
+
+                            String formatData = data.replace("=", "");
                             String formatData2 = formatData.replace("{", "");
-                            String formatData3 = formatData2.replace("}", "");
+                            String formatData3 = formatData2.replace("finishedFinish", "");
+                            String formatData4 = formatData3.replace("}", "");
 
                             SharedPreferences sharedPreferences = context.getSharedPreferences("data_from_db", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putInt("full_score", fullScore);
-                            editor.putString("title", formatData3);
+                            editor.putString("title", formatData4);
                             editor.apply();
                         }
 

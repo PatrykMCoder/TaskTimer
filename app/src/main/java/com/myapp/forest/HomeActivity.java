@@ -3,13 +3,11 @@ package com.myapp.forest;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.myapp.forest.adapters.DataForAdapter;
 import com.myapp.forest.adapters.ListAdapter;
 import com.myapp.forest.firebase.database.DatabaseController;
 
@@ -44,23 +41,17 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton profileImageButton;
 
     private String title;
-    private boolean finishTask = false;
-    private boolean pasueApk = false;
-
-    private String tmp;
-    private String[] referenceName;
-
-    private String scoreString;
-    private int fullScore;
-
+    private String titleToFormat;
     private String[] dataArray;
+    private int score;
+    private boolean finishTask = false;
+    private boolean pauseApp = false;
+
+
 
     private final String TAG = "HomeActivity";
 
     private DatabaseController databaseController;
-    private Intent intentWithData;
-    private Bundle bundle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
         lookLoginUser();
 
         finishTask = getIntent().getBooleanExtra("finish", false);
-        pasueApk = getIntent().getBooleanExtra("app_pause", false);
+        pauseApp = getIntent().getBooleanExtra("app_pause", false);
         title = getIntent().getStringExtra("title_f");
 
         infoWhereTextView = findViewById(R.id.infoWhereTV);
@@ -112,21 +103,20 @@ public class HomeActivity extends AppCompatActivity {
             showInfoAboutFinishedTask();
             updateUI();
         }
+
+        updateUI();
     }
 
     private void lookLoginUser() {
-        if (firebaseUser == null) {
+        if (databaseController.lookingUserLogin() == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             getEmailVer();
-            tmp = firebaseUser.getEmail();
-            assert tmp != null;
-            referenceName = tmp.split("@");
             databaseController.readFromDatabase();
-            updateUI();
         }
+        updateUI();
     }
 
     private void getEmailVer(){
@@ -149,7 +139,7 @@ public class HomeActivity extends AppCompatActivity {
                         dialog.cancel();
                     }
                 });
-        if (!pasueApk) {
+        if (!pauseApp) {
             builder.setMessage("You are finished your task! Congratulations! :) You got 5 score!");
         } else {
             builder.setMessage("You are finished your task! Congratulations! :) But, you leave application, so you got 1 score!");
@@ -162,18 +152,25 @@ public class HomeActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void readDataFromPreference(){
+        Context context = getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data_from_db", MODE_PRIVATE);
+
+        score = sharedPreferences.getInt("full_score", 0);
+
+        titleToFormat = sharedPreferences.getString("title", "");
+        dataArray = titleToFormat.split(",");
+    }
+
     private void updateUI() {
+        readDataFromPreference();
         scoreTextView = findViewById(R.id.scoreTV);
         listView = findViewById(R.id.lastTaskLV);
 
         if (databaseError)
             scoreTextView.setText(String.format("%s", "none"));
 
-        Context context = getApplicationContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences("data_from_db", MODE_PRIVATE);
-        int score = sharedPreferences.getInt("full_score", 0);
-        String titleToFormat = sharedPreferences.getString("title", "");
-        String[] dataArray = titleToFormat.split(",");
+
         scoreTextView.setText(String.format("%s", score));
         listView.setAdapter(new ListAdapter(getApplicationContext(), dataArray));
     }
