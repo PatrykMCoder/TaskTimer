@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Forest</string>
     <string name="default_id_token_google">1084358851322-f7gatbgrqeek62cnlsoikvgtv8vr7oj3.apps.googleusercontent.com</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

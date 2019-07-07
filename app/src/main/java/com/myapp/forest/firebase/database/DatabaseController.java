@@ -154,12 +154,7 @@ public class DatabaseController {
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                          String data = String.valueOf(dataSnapshot.getValue());
-                          /*  String formatData = data.replace("={finish=true}", "");
-                            String formatData2 = formatData.replace("{", "");
-                            String formatData3 = formatData2.replace("}", "");
-                            dataArray = formatData3.split(",");
-                           */
+                            String data = String.valueOf(dataSnapshot.getValue());
 
                             String formatData = data.replace("=", "");
                             String formatData2 = formatData.replace("{", "");
@@ -211,7 +206,6 @@ public class DatabaseController {
                 Map<String, Object> newScoreMap = new HashMap<>();
                 newScoreMap.put("score", fullScore);
                 databaseReference.updateChildren(newScoreMap);
-                readFromDatabase();
             }
 
             @Override
@@ -219,6 +213,8 @@ public class DatabaseController {
                 Log.d(TAG, "onCancelled: error: " + databaseError);
             }
         });
+
+        readFromDatabase();
     }
 
     public void removeAccount(String password){
@@ -249,6 +245,8 @@ public class DatabaseController {
     public ArrayList<String> loadProfile(boolean localProfile) {
         ArrayList<String> dataProfile = new ArrayList<>();
         if(localProfile){
+            readFromDatabase();
+
             String email = firebaseUser.getEmail();
             String[] emailFormat = email.split("@");
             String username = emailFormat[0];
@@ -257,9 +255,9 @@ public class DatabaseController {
             @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:SS");
             String dataCreateString = String.format("Account create: %s", dateFormat.format(createData));
 
-
             dataProfile.add(0, username);
-            dataProfile.add(1, dataCreateString);
+            dataProfile.add(1, String.valueOf(fullScore));
+            dataProfile.add(2, dataCreateString);
         }
         return dataProfile;
     }

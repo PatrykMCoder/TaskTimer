@@ -132,5 +132,17 @@
 
     </RelativeLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/stopTaskFB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_stop"
+        app:backgroundTint="@color/imageButtonColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="457dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

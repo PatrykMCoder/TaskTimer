@@ -23,20 +23,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.myapp.forest.adapters.ListAdapter;
 import com.myapp.forest.firebase.database.DatabaseController;
 
+//todo > change song type
+
 public class HomeActivity extends AppCompatActivity {
-
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
-
-    private boolean databaseError;
-    private boolean userVer;
 
     private FloatingActionButton addNewTaskFBtn;
     private TextView scoreTextView;
-    private TextView infoWhereTextView;
-    private ImageView arrowImageView;
     private ListView listView;
     private ImageButton profileImageButton;
 
@@ -46,19 +38,15 @@ public class HomeActivity extends AppCompatActivity {
     private int score;
     private boolean finishTask = false;
     private boolean pauseApp = false;
-
-
-
-    private final String TAG = "HomeActivity";
+    private boolean stopTask = false;
 
     private DatabaseController databaseController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
         databaseController = new DatabaseController(this);
 
         lookLoginUser();
@@ -66,9 +54,8 @@ public class HomeActivity extends AppCompatActivity {
         finishTask = getIntent().getBooleanExtra("finish", false);
         pauseApp = getIntent().getBooleanExtra("app_pause", false);
         title = getIntent().getStringExtra("title_f");
+        stopTask  = getIntent().getBooleanExtra("stop_task", false);
 
-        infoWhereTextView = findViewById(R.id.infoWhereTV);
-        arrowImageView = findViewById(R.id.arrorwIV);
         profileImageButton = findViewById(R.id.profileIB);
 
         addNewTaskFBtn = findViewById(R.id.addNewTaskFloatingActionButton);
@@ -97,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        if (finishTask) {
+        if (finishTask || stopTask) {
             databaseController.saveToDatabase(this, title);
             databaseController.readFromDatabase();
             showInfoAboutFinishedTask();
@@ -166,10 +153,6 @@ public class HomeActivity extends AppCompatActivity {
         readDataFromPreference();
         scoreTextView = findViewById(R.id.scoreTV);
         listView = findViewById(R.id.lastTaskLV);
-
-        if (databaseError)
-            scoreTextView.setText(String.format("%s", "none"));
-
 
         scoreTextView.setText(String.format("%s", score));
         listView.setAdapter(new ListAdapter(getApplicationContext(), dataArray));

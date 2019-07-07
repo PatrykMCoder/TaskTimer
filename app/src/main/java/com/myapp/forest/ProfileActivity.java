@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,16 +31,12 @@ import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
-
+    private ImageView profileImageView;
     private TextView usernameTextView;
+    private TextView scoreTextView;
     private TextView dataCreateAccountTextView;
     private Button removeAccountButton;
-
-    private String email;
-    private String[] username;
-    private long createData;
+    private Button updateDataButton;
 
     private DatabaseController databaseController;
 
@@ -51,15 +48,23 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-
-        usernameTextView = findViewById(R.id.usernameTV);
-        dataCreateAccountTextView = findViewById(R.id.dataCreateTV);
-        removeAccountButton = findViewById(R.id.removeAccountBtn);
 
         databaseController = new DatabaseController(this);
 
+        profileImageView = findViewById(R.id.profileIB);
+        usernameTextView = findViewById(R.id.usernameTV);
+        scoreTextView = findViewById(R.id.scoreTV);
+        dataCreateAccountTextView = findViewById(R.id.accoundCreateInTV);
+
+        updateDataButton = findViewById(R.id.updateDataOfUserBtn);
+        removeAccountButton = findViewById(R.id.removeAccountBtn);
+
+        updateDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ProfileActivity.this, "In future version app! :)", Toast.LENGTH_SHORT).show();
+            }
+        });
         removeAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +78,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void updateUI(){
         usernameTextView.setText(loadData().get(0));
-        dataCreateAccountTextView.setText(loadData().get(1));
+        scoreTextView.setText(String.format("Score: %s", loadData().get(1)));
+        dataCreateAccountTextView.setText(loadData().get(2));
     }
 
     private AlertDialog alertDialogBuilder(){

@@ -1,61 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
-    <TextView
-        android:id="@+id/usernameTV"
-        android:layout_width="220dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:text="Profile username"
-        android:textSize="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="200dp"
+        android:id="@+id/profileIB"
+        android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="15dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="132dp"
+        android:layout_marginLeft="132dp"
+        android:layout_marginTop="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameTV"
-        app:srcCompat="@drawable/ic_person"
-        tools:ignore="MissingConstraints,VectorDrawableCompat" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="43dp"
+        tools:srcCompat="@drawable/ic_person" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="266dp" />
+        tools:layout_editor_absoluteY="656dp">
+
+        <ImageButton
+            android:id="@+id/homeIB"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="10"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_home"
+            tools:ignore="VectorDrawableCompat" />
+
+        <ImageButton
+            android:id="@+id/settingsIB"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="-2dp"
+            android:layout_weight="10"
+            android:background="@null"
+            app:srcCompat="@drawable/ic_settings"
+            tools:ignore="VectorDrawableCompat" />
+    </RelativeLayout>
 
     <TextView
-        android:id="@+id/dataCreateTV"
+        android:id="@+id/usernameTV"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="50dp"
-        android:gravity="center_horizontal|center_vertical"
-        android:text="Account create: dd.MM.yyyy HH:mm:SS"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        android:layout_height="75dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="187dp"
+        android:gravity="center"
+        android:text="Username"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/scoreTV"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="264dp"
+        android:gravity="center"
+        android:text="Score: 750"
+        android:textSize="24dp" />
 
     <Button
         android:id="@+id/removeAccountBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/redError"
-        android:text="Remove Account"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="77dp"
+        android:background="#80FF0000"
+        android:text="Remove account" />
+
+    <Button
+        android:id="@+id/updateDataOfUserBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginBottom="79dp"
+        android:background="#8000FD0D"
+        android:text="Update user data" />
+
+    <TextView
+        android:id="@+id/accoundCreateInTV"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="345dp"
+        android:gravity="center"
+        android:text="Account create in: 27.06.2019 23:30:02"
+        android:textSize="20dp" />
+
+</RelativeLayout>

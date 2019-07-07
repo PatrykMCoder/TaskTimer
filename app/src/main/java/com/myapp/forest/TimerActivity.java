@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +32,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     private long full;
     private boolean runningTask;
     private String title;
+    private boolean stopTask;
 
     private CountDownTimer countDownTimer;
 
@@ -42,6 +45,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton summerNightImageButton;
     private ImageButton beachImageButton;
     private ImageView modeImageView;
+    private FloatingActionButton stopTaskFloatingActionButton;
 
     private int[] images = {0, R.drawable.forest, R.drawable.summer_night, R.drawable.beach};
     private int[] sounds = {R.raw.test, R.raw.test2, R.raw.test, R.raw.test2};
@@ -68,11 +72,13 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
         summerNightImageButton = findViewById(R.id.summerNightIB);
         beachImageButton = findViewById(R.id.beachIB);
         modeImageView = findViewById(R.id.modeIV);
+        stopTaskFloatingActionButton = findViewById(R.id.stopTaskFB);
 
         defaultImageButton.setOnClickListener(this);
         forestImageButton.setOnClickListener(this);
         summerNightImageButton.setOnClickListener(this);
         beachImageButton.setOnClickListener(this);
+        stopTaskFloatingActionButton.setOnClickListener(this);
 
         modeImageView.setImageLevel(0);
         timeProgressBar.setProgress(100);
@@ -124,6 +130,16 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
                 beachImageButton.setBackgroundColor(Color.TRANSPARENT);
                 stopSound();
                 playSound(3);
+                break;
+            case R.id.stopTaskFB:
+                stopTask = true;
+                Intent stopTaskIntent = new Intent(this, HomeActivity.class);
+                score = 0;
+                countDownTimer.cancel();
+                minusScore = Boolean.parseBoolean(null);
+                stopTaskIntent.putExtra("add_score", score);
+                stopTaskIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(stopTaskIntent);
                 break;
             default:
                 break;
