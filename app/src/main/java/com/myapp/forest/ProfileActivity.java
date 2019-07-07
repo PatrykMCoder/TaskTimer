@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView dataCreateAccountTextView;
     private Button removeAccountButton;
     private Button updateDataButton;
+    private ImageButton homeImageButton;
+    private ImageButton settingsImageButton;
 
     private DatabaseController databaseController;
 
@@ -59,6 +62,9 @@ public class ProfileActivity extends AppCompatActivity {
         updateDataButton = findViewById(R.id.updateDataOfUserBtn);
         removeAccountButton = findViewById(R.id.removeAccountBtn);
 
+        homeImageButton = findViewById(R.id.homeIB);
+        settingsImageButton = findViewById(R.id.settingsIB);
+
         updateDataButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +76,21 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 alertDialogRemoveAccount = alertDialogBuilder();
                 alertDialogRemoveAccount.show();
+            }
+        });
+
+        homeImageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        settingsImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingIntent = new Intent(ProfileActivity.this, SettingsActivity.class);
+                startActivity(settingIntent);
             }
         });
 

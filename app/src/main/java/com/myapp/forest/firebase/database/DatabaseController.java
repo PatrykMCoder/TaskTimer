@@ -261,4 +261,8 @@ public class DatabaseController {
         }
         return dataProfile;
     }
+
+    public void saveSettingsApp(){
+
+    }
 }
