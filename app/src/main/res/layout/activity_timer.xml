@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="575dp"
         android:adjustViewBounds="false"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/titleTV"
@@ -95,8 +96,10 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
             android:background="@drawable/background_image_button"
             app:srcCompat="@drawable/ic_bell" />
 
@@ -105,8 +108,10 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="332dp"
+            android:layout_marginLeft="332dp"
             android:background="@drawable/background_image_button"
             app:srcCompat="@drawable/ic_beach" />
 
@@ -115,8 +120,10 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="234dp"
+            android:layout_marginLeft="234dp"
             android:background="@drawable/background_image_button"
             app:srcCompat="@drawable/ic_moon" />
 
@@ -125,24 +132,13 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="126dp"
+            android:layout_marginLeft="126dp"
             android:background="@drawable/background_image_button"
             app:srcCompat="@drawable/ic_three" />
 
     </RelativeLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/stopTaskFB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@drawable/ic_stop"
-        app:backgroundTint="@color/imageButtonColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="457dp"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

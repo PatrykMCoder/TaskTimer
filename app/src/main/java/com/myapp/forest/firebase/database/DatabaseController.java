@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.telephony.mbms.MbmsErrors;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
@@ -58,6 +61,7 @@ public class DatabaseController {
 
     private String scoreString;
     private int fullScore;
+    private String friendScoreString = "0";
 
     private long createData;
 
@@ -240,29 +244,31 @@ public class DatabaseController {
 
     public void signOut() {
         firebaseAuth.signOut();
+        firebaseUser = null;
     }
 
-    public ArrayList<String> loadProfile(boolean localProfile) {
+    public ArrayList<String> loadLocalProfile() {
         ArrayList<String> dataProfile = new ArrayList<>();
-        if(localProfile){
-            readFromDatabase();
+        String email;
+        String[] emailFormat;
+        String username;
+        readFromDatabase();
 
-            String email = firebaseUser.getEmail();
-            String[] emailFormat = email.split("@");
-            String username = emailFormat[0];
+        email = firebaseUser.getEmail();
+        emailFormat = email.split("@");
+        username = emailFormat[0];
 
-            createData = ((firebaseUser.getMetadata())).getCreationTimestamp();
-            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:SS");
-            String dataCreateString = String.format("Account create: %s", dateFormat.format(createData));
+        createData = ((firebaseUser.getMetadata())).getCreationTimestamp();
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:SS");
+        String dataCreateString = String.format("Account create: %s", dateFormat.format(createData));
 
-            dataProfile.add(0, username);
-            dataProfile.add(1, String.valueOf(fullScore));
-            dataProfile.add(2, dataCreateString);
-        }
+        //add read from db
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data_from_db", context.MODE_PRIVATE);
+        fullScore = sharedPreferences.getInt("full_score", 0);
+
+        dataProfile.add(0, username);
+        dataProfile.add(1, String.valueOf(fullScore));
+        dataProfile.add(2, dataCreateString);
         return dataProfile;
-    }
-
-    public void saveSettingsApp(){
-
     }
 }

@@ -3,14 +3,18 @@ package com.myapp.forest;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
         finishTask = getIntent().getBooleanExtra("finish", false);
         pauseApp = getIntent().getBooleanExtra("app_pause", false);
         title = getIntent().getStringExtra("title_f");
-        stopTask  = getIntent().getBooleanExtra("stop_task", false);
+        stopTask = getIntent().getBooleanExtra("stop_task", false);
 
         profileImageButton = findViewById(R.id.profileIB);
 
@@ -69,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         addNewTaskFBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+               //create button for this
                 databaseController.signOut();
                 lookLoginUser();
                 return true;
@@ -78,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         profileImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                databaseController.loadProfile(true);
+                databaseController.loadLocalProfile();
                 Intent profileIntent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(profileIntent);
             }
@@ -88,7 +93,6 @@ public class HomeActivity extends AppCompatActivity {
             databaseController.saveToDatabase(this, title);
             databaseController.readFromDatabase();
             showInfoAboutFinishedTask();
-            updateUI();
         }
 
         updateUI();
@@ -106,8 +110,8 @@ public class HomeActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void getEmailVer(){
-        if(!databaseController.getEmailVer()){
+    private void getEmailVer() {
+        if (!databaseController.getEmailVer()) {
             Toast.makeText(this, "Please verified your email!", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -139,7 +143,7 @@ public class HomeActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void readDataFromPreference(){
+    private void readDataFromPreference() {
         Context context = getApplicationContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences("data_from_db", MODE_PRIVATE);
 

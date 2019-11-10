@@ -4,4 +4,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_string">0</string>
+    <string name="image_button_description_search">Search profiles</string>
+    <string name="image_button_description_profile">Go to your profile</string>
 </resources>

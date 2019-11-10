@@ -139,6 +139,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private ArrayList<String> loadData(){
-        return databaseController.loadProfile(true);
+        return databaseController.loadLocalProfile();
     }
 }

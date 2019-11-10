@@ -45,15 +45,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton summerNightImageButton;
     private ImageButton beachImageButton;
     private ImageView modeImageView;
-    private FloatingActionButton stopTaskFloatingActionButton;
 
     private int[] images = {0, R.drawable.forest, R.drawable.summer_night, R.drawable.beach};
     private int[] sounds = {R.raw.test, R.raw.test2, R.raw.test, R.raw.test2};
 
     private MediaPlayer modeMediaPlayer;
-
-    private boolean appIsPause = false;
-    private boolean minusScore = false;
 
     private int score;
 
@@ -72,13 +68,11 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
         summerNightImageButton = findViewById(R.id.summerNightIB);
         beachImageButton = findViewById(R.id.beachIB);
         modeImageView = findViewById(R.id.modeIV);
-        stopTaskFloatingActionButton = findViewById(R.id.stopTaskFB);
 
         defaultImageButton.setOnClickListener(this);
         forestImageButton.setOnClickListener(this);
         summerNightImageButton.setOnClickListener(this);
         beachImageButton.setOnClickListener(this);
-        stopTaskFloatingActionButton.setOnClickListener(this);
 
         modeImageView.setImageLevel(0);
         timeProgressBar.setProgress(100);
@@ -131,16 +125,16 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
                 stopSound();
                 playSound(3);
                 break;
-            case R.id.stopTaskFB:
-                stopTask = true;
-                Intent stopTaskIntent = new Intent(this, HomeActivity.class);
-                score = 0;
-                countDownTimer.cancel();
-                minusScore = Boolean.parseBoolean(null);
-                stopTaskIntent.putExtra("add_score", score);
-                stopTaskIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(stopTaskIntent);
-                break;
+//            case R.id.stopTaskFB:
+//                stopTask = true;
+//                Intent stopTaskIntent = new Intent(this, HomeActivity.class);
+//                score = 0;
+//                countDownTimer.cancel();
+//                minusScore = Boolean.parseBoolean(null);
+//                stopTaskIntent.putExtra("add_score", score);
+//                stopTaskIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(stopTaskIntent);
+//                break;
             default:
                 break;
         }
@@ -158,9 +152,6 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
         }
 
         full = h + m + s;
-
-        String TAG = "TimerActivity";
-        Log.d(TAG, "getDataFromIntent: h: " + h + " m: " + m + " s: " + s + " status: " + runningTask);
     }
 
     @Override
@@ -187,14 +178,8 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
                     finishIntent.putExtra("title_f", title);
                     finishIntent.putExtra("finish", true);
                     finishIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    if(!minusScore){
-                        score = 5;
-                        finishIntent.putExtra("add_score", score);
-                    }else{
-                        score = 1;
-                        finishIntent.putExtra("add_score", score);
-                        finishIntent.putExtra("app_pause", appIsPause);
-                    }
+                    score = 5;
+                    finishIntent.putExtra("add_score", score);
                     stopSound();
                     startActivity(finishIntent);
                 }
@@ -231,17 +216,7 @@ public class TimerActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    protected void onPause() {
-        appIsPause = true;
-        minusScore = true;
-        super.onPause();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        if(appIsPause && runningTask){
-            Toast.makeText(this, "You leave app! You lose  4 pkt for your score! :C", Toast.LENGTH_SHORT).show();
-        }
     }
 }

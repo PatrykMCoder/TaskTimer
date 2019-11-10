@@ -2,8 +2,8 @@ package com.myapp.forest.timer;
 
 public class Timer {
 
-    String title;
-    long time;
+    private String title;
+    private long time;
 
     public Timer(String title, long time){
         this.title = title;
